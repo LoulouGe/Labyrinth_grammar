@@ -1,0 +1,66 @@
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.title {
+  position: absolute;
+  top: 30px;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-shadow: 0 0 20px var(--primary-glow);
+  letter-spacing: 2px;
+  z-index: 10;
+}
+
+.game-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.controls-hint {
+  position: absolute;
+  bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  opacity: 0.7;
+}
+
+/* Base Modal Styles reused by both modals */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  padding: 40px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

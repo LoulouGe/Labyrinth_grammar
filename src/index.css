@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+
+:root {
+  --bg-color: #0d111a;
+  --bg-gradient: linear-gradient(135deg, #0d111a 0%, #151025 100%);
+  --path: #1a2530;
+  --path-glow: #31506b;
+  --wall: #000000;
+  --wall-highlight: #211536;
+  --primary: #9b51e0;
+  --primary-glow: rgba(155, 81, 224, 0.6);
+  --success: #27ae60;
+  --success-glow: rgba(39, 174, 96, 0.6);
+  --warning: #f2994a;
+  --danger: #eb5757;
+  --text-main: #ffffff;
+  --text-secondary: #caced5;
+  --font-family: 'Outfit', sans-serif;
+  --cell-size: 50px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg-color);
+  background-image: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 16px;
+}
+
+.text-gradient {
+  background: linear-gradient(45deg, #e0c3fc, #8ec5fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
