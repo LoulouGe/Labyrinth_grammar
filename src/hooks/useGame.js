@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { generateMaze } from '../utils/mazeGenerator';
+import { questions } from '../data/grammar';
 
-export function useGame(width = 15, height = 15) {
+export function useGame(width = 15, height = 15, seed = 0, doorCount = 1) {
   const [maze, setMaze] = useState([]);
   const [won, setWon] = useState(false);
   const [solutionPath, setSolutionPath] = useState([]);
+  const [doors, setDoors] = useState([]);
 
   useEffect(() => {
     const newMaze = generateMaze(width, height);
@@ -44,13 +46,47 @@ export function useGame(width = 15, height = 15) {
     }
     setSolutionPath(path);
 
-  }, [width, height]);
+    // Generate Grammar Doors
+    const newDoors = [];
+    if (path.length > 2) {
+      const pathWithoutEnds = path.slice(1, -1);
+      const nbDoors = Math.min(doorCount, pathWithoutEnds.length);
+      const candidateIndices = pathWithoutEnds.map((_, index) => index);
 
-  useEffect(() => {
-    if (won) {
-      setTimeout(() => alert("🤜🤛 Check ! Tu as checké le minotaure au centre du labyrinthe ! Vous êtes devenus de super potes."), 500);
+      while (candidateIndices.length > 0 && newDoors.length < nbDoors) {
+        const ratio = (newDoors.length + 1) / (nbDoors + 1);
+        const targetIndex = Math.floor(ratio * pathWithoutEnds.length);
+
+        let closestCandidatePos = 0;
+        let closestDistance = Infinity;
+        candidateIndices.forEach((candidateIndex, pos) => {
+          const distance = Math.abs(candidateIndex - targetIndex);
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestCandidatePos = pos;
+          }
+        });
+
+        const cellIndex = candidateIndices.splice(closestCandidatePos, 1)[0];
+        const cell = pathWithoutEnds[cellIndex];
+        const prev = cellIndex === 0 ? path[0] : pathWithoutEnds[cellIndex - 1];
+        let orientation = 'horizontal'; // Blocks Z-axis movement
+        if (prev.x !== cell.x) orientation = 'vertical'; // Blocks X-axis movement
+
+        const qObj = questions[Math.floor(Math.random() * questions.length)];
+        newDoors.push({
+          id: `door-${cell.x}-${cell.y}`,
+          x: (prev.x + cell.x) / 2,
+          y: (prev.y + cell.y) / 2,
+          orientation,
+          question: qObj,
+          status: 'closed' // 'closed', 'wrong', 'open'
+        });
+      }
     }
-  }, [won]);
+    setDoors(newDoors);
 
-  return { maze, won, setWon, solutionPath };
+  }, [width, height, seed, doorCount]);
+
+  return { maze, won, setWon, solutionPath, doors, setDoors };
 }
