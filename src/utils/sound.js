@@ -35,6 +35,7 @@ function createTone(audioContext, options) {
 
 export function createSoundPlayer() {
   let audioContext = null;
+  let masterVolume = 1;
 
   const getContext = async () => {
     if (typeof window === 'undefined') return null;
@@ -64,7 +65,10 @@ export function createSoundPlayer() {
     let offset = 0;
     tones.forEach((tone) => {
       window.setTimeout(() => {
-        createTone(context, tone);
+        createTone(context, {
+          ...tone,
+          volume: (tone.volume ?? 0.04) * masterVolume,
+        });
       }, offset);
       offset += tone.delay ?? 90;
     });
@@ -72,6 +76,9 @@ export function createSoundPlayer() {
 
   return {
     unlock: () => getContext(),
+    setVolume: (nextVolume) => {
+      masterVolume = Math.max(0, Math.min(1, nextVolume));
+    },
     click: () =>
       playSequence([
         { frequency: 440, frequencyEnd: 520, type: 'triangle', duration: 0.07, volume: 0.025, delay: 0 },
@@ -89,6 +96,22 @@ export function createSoundPlayer() {
     error: () =>
       playSequence([
         { frequency: 320, frequencyEnd: 240, type: 'sawtooth', duration: 0.12, volume: 0.025, delay: 0 },
+      ]),
+    damage: () =>
+      playSequence([
+        { frequency: 280, frequencyEnd: 180, type: 'sawtooth', duration: 0.15, volume: 0.028, delay: 0 },
+        { frequency: 200, frequencyEnd: 150, type: 'square', duration: 0.1, volume: 0.02, delay: 90 },
+      ]),
+    pickup: () =>
+      playSequence([
+        { frequency: 523, frequencyEnd: 659, type: 'triangle', duration: 0.07, volume: 0.025, delay: 0 },
+        { frequency: 784, frequencyEnd: 988, type: 'triangle', duration: 0.09, volume: 0.028, delay: 85 },
+      ]),
+    boss: () =>
+      playSequence([
+        { frequency: 220, frequencyEnd: 196, type: 'sawtooth', duration: 0.16, volume: 0.03, delay: 0 },
+        { frequency: 196, frequencyEnd: 174, type: 'sawtooth', duration: 0.18, volume: 0.03, delay: 120 },
+        { frequency: 174, frequencyEnd: 220, type: 'triangle', duration: 0.22, volume: 0.028, delay: 160 },
       ]),
     win: () =>
       playSequence([

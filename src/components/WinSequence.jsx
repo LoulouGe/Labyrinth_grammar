@@ -1,22 +1,25 @@
+/* eslint-disable react-hooks/immutability */
 import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const CharacterPlane = ({ texturePath, position, rotation, scale = 2.2 }) => {
+const CharacterPlane = ({ texturePath, position, rotation, scale = 2.2, tint = '#ffffff' }) => {
   const tex = useLoader(THREE.TextureLoader, texturePath);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.magFilter = THREE.NearestFilter;
+  useEffect(() => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.magFilter = THREE.NearestFilter;
+  }, [tex]);
   const aspectRatio = tex.image ? tex.image.width / tex.image.height : 1;
 
   return (
     <mesh position={position} rotation={rotation} castShadow receiveShadow renderOrder={20}>
       <planeGeometry args={[scale * aspectRatio, scale]} />
-      <meshBasicMaterial map={tex} transparent={true} side={THREE.DoubleSide} alphaTest={0.08} depthTest={false} toneMapped={false} />
+      <meshBasicMaterial map={tex} color={tint} transparent={true} side={THREE.DoubleSide} alphaTest={0.08} depthTest={false} toneMapped={false} />
     </mesh>
   );
 };
 
-export default function WinSequence({ maze }) {
+export default function WinSequence({ maze, playerSkin }) {
   const { camera } = useThree();
   const centerX = Math.floor(maze[0].length / 2) * 2;
   const centerZ = Math.floor(maze.length / 2) * 2;
@@ -27,7 +30,7 @@ export default function WinSequence({ maze }) {
     camera.up.set(0, 1, 0);
   }, [camera]);
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const t = state.clock.getElapsedTime();
     
     camera.position.x = centerX;
@@ -57,6 +60,7 @@ export default function WinSequence({ maze }) {
           position={[0.86, 0.54, 0.64]} 
           rotation={[0, -Math.PI / 6, 0]} 
           scale={2.5}
+          tint={playerSkin?.tint}
         />
       </group>
     </group>

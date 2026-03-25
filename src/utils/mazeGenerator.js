@@ -1,4 +1,4 @@
-export function generateMaze(width, height) {
+export function generateMaze(width, height, random = Math.random) {
   const grid = [];
   // Initialize the grid with walls everywhere
   for (let y = 0; y < height; y++) {
@@ -58,7 +58,7 @@ export function generateMaze(width, height) {
 
     if (neighbors.length > 0) {
       // Choose randomly one of the unvisited neighbors
-      const randomIndex = Math.floor(Math.random() * neighbors.length);
+      const randomIndex = Math.floor(random() * neighbors.length);
       const randomNeighbor = neighbors[randomIndex];
 
       // Push current cell to stack
