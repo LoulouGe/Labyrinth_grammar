@@ -2042,7 +2042,7 @@ function App() {
                   Secrets trouves: {openedChestCount}/{bonusChests.length} • Portes elite: {eliteDoorCount} • Gardien final: {runStep === modeConfig.runLength ? 'oui' : 'non'}
                 </div>
                 <div style={{ marginTop: '10px', fontSize: '0.82rem', opacity: 0.66 }}>
-                  Z/S ou fleches haut/bas pour avancer • Q/D ou fleches gauche/droite pour tourner • Echap pour pause
+                  Fleche haut/bas pour avancer ou reculer • Fleche gauche/droite pour tourner • ZQSD aussi actifs • Echap pour pause
                 </div>
                 <Minimap
                   maze={maze}

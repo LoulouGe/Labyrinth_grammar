@@ -72,67 +72,112 @@ function getDoorLabel(door) {
   return door.question.category;
 }
 
-function TreasureChest({ chest, revealSecrets }) {
+function TreasureChest({ chest, revealSecrets, theme }) {
   const groupRef = React.useRef();
   const glowRef = React.useRef();
   const beamRef = React.useRef();
   const lidRef = React.useRef();
+  const gemRef = React.useRef();
+  const haloRef = React.useRef();
 
   useFrame((state) => {
-    if (!groupRef.current || !glowRef.current || !beamRef.current || !lidRef.current) return;
+    if (!groupRef.current || !glowRef.current || !beamRef.current || !lidRef.current || !gemRef.current || !haloRef.current) return;
 
     const pulse = 0.45 + Math.sin(state.clock.elapsedTime * 6) * 0.14;
     const isOpen = chest.status === 'open';
     groupRef.current.position.y = chest.status === 'open'
-      ? -1.4
-      : 0.46 + Math.sin(state.clock.elapsedTime * 2 + chest.x + chest.y) * 0.08;
+      ? -1.35
+      : 0.42 + Math.sin(state.clock.elapsedTime * 2 + chest.x + chest.y) * 0.05;
     glowRef.current.material.opacity = chest.status === 'open'
       ? 0
       : revealSecrets
-        ? 0.48 + pulse * 0.2
-        : 0.18 + pulse * 0.08;
+        ? 0.42 + pulse * 0.18
+        : 0.12 + pulse * 0.05;
     beamRef.current.material.opacity = isOpen
-      ? 0.42 + pulse * 0.12
+      ? 0.36 + pulse * 0.1
       : revealSecrets
-        ? 0.18 + pulse * 0.08
+        ? 0.12 + pulse * 0.08
         : 0;
     beamRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 1.5 + chest.x) * 0.08;
-    lidRef.current.rotation.z = isOpen ? -0.95 : -0.12 + Math.sin(state.clock.elapsedTime * 2.4) * 0.03;
+    lidRef.current.rotation.z = isOpen ? -1.02 : -0.08 + Math.sin(state.clock.elapsedTime * 2.4) * 0.02;
+    gemRef.current.position.y = isOpen ? 0.56 + Math.sin(state.clock.elapsedTime * 4.5) * 0.08 : 0.34;
+    gemRef.current.rotation.y += 0.02;
+    haloRef.current.rotation.z += 0.01;
+    haloRef.current.material.opacity = isOpen ? 0.18 + pulse * 0.12 : 0.08 + pulse * 0.05;
   });
 
   const rarityColor = getChestColor(chest.rewardType);
+  const metalColor = chest.rewardType === 'score' ? '#c99b48' : chest.rewardType === 'shield' ? '#9cd7c2' : '#d6b56d';
+  const woodColor = theme?.trunkColor ?? '#6b4c34';
+  const woodShadow = theme?.leafGlow ?? '#2a180f';
 
   return (
-    <group ref={groupRef} position={[chest.x * 2, 0.46, chest.y * 2]}>
-      <mesh position={[0, -0.08, 0]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.82, 0.16, 0.82]} />
-        <meshStandardMaterial color="#5f3d22" roughness={0.9} />
+    <group ref={groupRef} position={[chest.x * 2, 0.42, chest.y * 2]}>
+      <mesh position={[0, -0.18, 0]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.72, 0.86, 0.16, 4]} />
+        <meshStandardMaterial color={woodShadow} roughness={0.95} />
       </mesh>
-      <mesh rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.7, 0.38, 0.7]} />
-        <meshStandardMaterial color={rarityColor} emissive={rarityColor} emissiveIntensity={revealSecrets ? 0.35 : 0.18} />
+      <mesh position={[0, 0.03, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.86, 0.42, 0.58]} />
+        <meshStandardMaterial color={woodColor} roughness={0.82} metalness={0.08} />
       </mesh>
-      <group ref={lidRef} position={[0, 0.23, -0.16]}>
-        <mesh position={[0, 0.08, 0.16]} rotation={[0, Math.PI / 4, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.72, 0.14, 0.72]} />
-          <meshStandardMaterial color={rarityColor} emissive={rarityColor} emissiveIntensity={0.26} />
+      <mesh position={[0, 0.01, 0.22]} castShadow receiveShadow>
+        <boxGeometry args={[0.9, 0.08, 0.06]} />
+        <meshStandardMaterial color={metalColor} metalness={0.75} roughness={0.26} />
+      </mesh>
+      <mesh position={[0, 0.01, -0.22]} castShadow receiveShadow>
+        <boxGeometry args={[0.9, 0.08, 0.06]} />
+        <meshStandardMaterial color={metalColor} metalness={0.75} roughness={0.26} />
+      </mesh>
+      <mesh position={[-0.28, 0.01, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.08, 0.44, 0.62]} />
+        <meshStandardMaterial color={metalColor} metalness={0.75} roughness={0.26} />
+      </mesh>
+      <mesh position={[0.28, 0.01, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.08, 0.44, 0.62]} />
+        <meshStandardMaterial color={metalColor} metalness={0.75} roughness={0.26} />
+      </mesh>
+      <group ref={lidRef} position={[0, 0.21, -0.22]}>
+        <mesh position={[0, 0.08, 0.22]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.26, 0.26, 0.86, 20, 1, false, 0, Math.PI]} />
+          <meshStandardMaterial color={woodColor} roughness={0.78} metalness={0.08} />
+        </mesh>
+        <mesh position={[0, 0.08, 0.22]} castShadow receiveShadow>
+          <torusGeometry args={[0.26, 0.03, 8, 18, Math.PI]} />
+          <meshStandardMaterial color={metalColor} metalness={0.78} roughness={0.24} />
+        </mesh>
+        <mesh position={[0, 0.06, 0.45]} castShadow receiveShadow>
+          <boxGeometry args={[0.18, 0.12, 0.06]} />
+          <meshStandardMaterial color={metalColor} metalness={0.78} roughness={0.22} />
         </mesh>
       </group>
       <mesh ref={beamRef} position={[0, 1.05, 0]} rotation={[0, 0, 0]}>
-        <cylinderGeometry args={[0.07, 0.24, 1.9, 16, 1, true]} />
+        <cylinderGeometry args={[0.08, 0.28, 1.85, 16, 1, true]} />
         <meshBasicMaterial color={rarityColor} transparent opacity={0} depthWrite={false} />
       </mesh>
-      <mesh position={[0, 0.38, 0]} rotation={[0, Math.PI / 4, 0]}>
-        <octahedronGeometry args={[0.12, 0]} />
-        <meshStandardMaterial color="#fff4c8" emissive={rarityColor} emissiveIntensity={0.9} />
+      <mesh ref={haloRef} position={[0, 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.28, 0.52, 28]} />
+        <meshBasicMaterial color={rarityColor} transparent opacity={0.12} side={THREE.DoubleSide} />
+      </mesh>
+      <mesh position={[0, 0.06, 0.32]} castShadow receiveShadow>
+        <boxGeometry args={[0.16, 0.18, 0.06]} />
+        <meshStandardMaterial color={metalColor} metalness={0.85} roughness={0.2} />
+      </mesh>
+      <mesh position={[0, -0.02, 0.35]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.06, 0.06, 0.04, 18]} />
+        <meshStandardMaterial color={rarityColor} emissive={rarityColor} emissiveIntensity={0.7} metalness={0.35} roughness={0.22} />
+      </mesh>
+      <mesh ref={gemRef} position={[0, 0.34, 0]} rotation={[0.2, Math.PI / 4, 0]}>
+        <octahedronGeometry args={[0.14, 0]} />
+        <meshStandardMaterial color="#fff6d8" emissive={rarityColor} emissiveIntensity={1.15} metalness={0.18} roughness={0.14} />
       </mesh>
       <mesh position={[0, 0.28, 0]} rotation={[Math.PI / 2, 0, 0]} ref={glowRef}>
-        <ringGeometry args={[0.25, 0.45, 20]} />
+        <ringGeometry args={[0.28, 0.52, 24]} />
         <meshBasicMaterial color={rarityColor} transparent opacity={0.28} side={THREE.DoubleSide} />
       </mesh>
       {revealSecrets && chest.status === 'closed' && (
         <Text
-          position={[0, 0.78, 0]}
+          position={[0, 0.86, 0]}
           fontSize={0.1}
           color={rarityColor}
           maxWidth={1.4}
@@ -569,7 +614,7 @@ export default function Level({
       <Forest mazeWidth={mazeWidth} mazeHeight={mazeHeight} theme={theme} />
 
       {bonusChests?.map((chest) => (
-        <TreasureChest key={chest.id} chest={chest} revealSecrets={revealSecrets} />
+        <TreasureChest key={chest.id} chest={chest} revealSecrets={revealSecrets} theme={theme} />
       ))}
 
       {doors?.map((door) => (
